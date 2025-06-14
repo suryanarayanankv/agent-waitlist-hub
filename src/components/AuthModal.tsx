@@ -11,9 +11,10 @@ import { Loader2 } from 'lucide-react';
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSignUpSuccess?: () => void;
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSignUpSuccess }) => {
   const [isSignUp, setIsSignUp] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -63,20 +64,39 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         result = await signUp(email, password, {
           full_name: fullName
         });
+        
+        if (!result.error) {
+          toast({
+            title: "Account Created! 🎉",
+            description: "You can now fill out the waitlist form.",
+          });
+          handleClose();
+          if (onSignUpSuccess) {
+            onSignUpSuccess();
+          }
+        }
       } else {
         result = await signIn(email, password);
+        
+        if (!result.error) {
+          toast({
+            title: "Welcome Back!",
+            description: "You're now signed in.",
+          });
+          handleClose();
+        }
       }
 
       if (result.error) {
         let errorMessage = result.error.message;
         
-        // Handle common auth errors with user-friendly messages
         if (errorMessage.includes('Email not confirmed')) {
           errorMessage = 'Please check your email and click the confirmation link before signing in.';
         } else if (errorMessage.includes('Invalid login credentials')) {
           errorMessage = 'Invalid email or password. Please try again.';
         } else if (errorMessage.includes('User already registered')) {
           errorMessage = 'An account with this email already exists. Try signing in instead.';
+          setIsSignUp(false);
         }
 
         toast({
@@ -84,12 +104,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           description: errorMessage,
           variant: "destructive"
         });
-      } else {
-        toast({
-          title: isSignUp ? "Account Created!" : "Welcome Back!",
-          description: isSignUp ? "Please check your email to verify your account." : "You're now signed in.",
-        });
-        handleClose();
       }
     } catch (error: any) {
       console.error('Auth error:', error);
@@ -108,7 +122,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-bold">
-            {isSignUp ? 'Join AutoAgent Waitlist' : 'Welcome Back'}
+            {isSignUp ? 'Create Account' : 'Welcome Back'}
           </DialogTitle>
         </DialogHeader>
         
@@ -166,7 +180,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 {isSignUp ? 'Creating Account...' : 'Signing In...'}
               </>
             ) : (
-              isSignUp ? 'Create Account & Join Waitlist' : 'Sign In'
+              isSignUp ? 'Create Account' : 'Sign In'
             )}
           </Button>
           
