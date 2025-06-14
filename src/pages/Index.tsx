@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Hero from '@/components/Hero';
 import BenefitsSection from '@/components/BenefitsSection';
@@ -13,7 +13,15 @@ import { useWaitlistStatus } from '@/hooks/useWaitlistStatus';
 const Index = () => {
   const [showWaitlistForm, setShowWaitlistForm] = useState(false);
   const { userEmail, saveUserEmail } = useUserEmail();
-  const { isOnWaitlist } = useWaitlistStatus(userEmail);
+  const { isOnWaitlist, checkWaitlistStatus } = useWaitlistStatus(userEmail);
+
+  // Check waitlist status when component mounts and when userEmail changes
+  useEffect(() => {
+    if (userEmail) {
+      console.log('Index: Checking waitlist status for email:', userEmail);
+      checkWaitlistStatus(userEmail);
+    }
+  }, [userEmail, checkWaitlistStatus]);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -23,6 +31,7 @@ const Index = () => {
   };
 
   const handleWaitlistClick = () => {
+    console.log('Waitlist click - isOnWaitlist:', isOnWaitlist);
     if (isOnWaitlist) {
       // Redirect to MVP
       window.location.href = 'https://example.com/mvp'; // Replace with your MVP URL

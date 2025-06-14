@@ -11,6 +11,7 @@ export const useWaitlistStatus = (email?: string) => {
     
     setIsLoading(true);
     try {
+      console.log('Checking waitlist status for:', emailToCheck);
       const { data, error } = await supabase
         .from('waitlist')
         .select('id')
@@ -22,7 +23,9 @@ export const useWaitlistStatus = (email?: string) => {
         return;
       }
 
-      setIsOnWaitlist(!!data);
+      const isOnWaitlistResult = !!data;
+      console.log('Waitlist status result:', isOnWaitlistResult);
+      setIsOnWaitlist(isOnWaitlistResult);
     } catch (error) {
       console.error('Error checking waitlist status:', error);
     } finally {
@@ -32,6 +35,7 @@ export const useWaitlistStatus = (email?: string) => {
 
   useEffect(() => {
     if (email) {
+      console.log('Email changed, checking waitlist status for:', email);
       checkWaitlistStatus(email);
     }
   }, [email]);
