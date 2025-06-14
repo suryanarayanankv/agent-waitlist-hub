@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -37,7 +36,7 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
 
   const handleAlreadyJoinedSubmit = () => {
     // Redirect to MVP directly
-    window.location.href = 'https://example.com/mvp'; // Replace with your MVP URL
+    window.location.href = 'https://0805-13-61-96-76.ngrok-free.app/';
     onClose();
   };
 

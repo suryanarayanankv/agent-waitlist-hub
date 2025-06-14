@@ -26,7 +26,7 @@ const Hero: React.FC<HeroProps> = ({ onJoinWaitlist, onLearnMore, isOnWaitlist }
             streamline workflows, and boost productivity while you focus on what matters most.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <Button 
               size="lg"
               onClick={onJoinWaitlist}
@@ -45,33 +45,6 @@ const Hero: React.FC<HeroProps> = ({ onJoinWaitlist, onLearnMore, isOnWaitlist }
               <Play size={20} />
               <span>Learn More</span>
             </Button>
-          </div>
-
-          {/* Feature highlights */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div className="p-6">
-              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🤖</span>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Smart Automation</h3>
-              <p className="text-gray-600">AI-powered agents that learn and adapt to your workflows</p>
-            </div>
-            
-            <div className="p-6">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">⚡</span>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Lightning Fast</h3>
-              <p className="text-gray-600">Process thousands of tasks in minutes, not hours</p>
-            </div>
-            
-            <div className="p-6">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🎯</span>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Precision Accuracy</h3>
-              <p className="text-gray-600">99.9% accuracy with continuous learning capabilities</p>
-            </div>
           </div>
         </div>
       </div>

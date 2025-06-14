@@ -34,7 +34,7 @@ const Index = () => {
     console.log('Waitlist click - isOnWaitlist:', isOnWaitlist);
     if (isOnWaitlist) {
       // Redirect to MVP
-      window.location.href = 'https://example.com/mvp'; // Replace with your MVP URL
+      window.location.href = 'https://0805-13-61-96-76.ngrok-free.app/';
     } else {
       setShowWaitlistForm(true);
     }
@@ -43,7 +43,7 @@ const Index = () => {
   const handleWaitlistSuccess = (email: string) => {
     saveUserEmail(email);
     // Redirect to the success URL
-    window.location.href = 'https://example.com/success'; // Replace with your redirect URL
+    window.location.href = 'https://0805-13-61-96-76.ngrok-free.app/';
   };
 
   return (
