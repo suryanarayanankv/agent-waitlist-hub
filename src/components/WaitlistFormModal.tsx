@@ -4,10 +4,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { CheckCircle, Loader2 } from 'lucide-react';
 
@@ -18,22 +16,15 @@ interface WaitlistFormModalProps {
 }
 
 const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, onSuccess }) => {
-  const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    full_name: '',
-    email: user?.email || '',
-    company: '',
-    job_title: '',
-    primary_use_case: '',
-    company_size: '',
-    first_task: '',
-    current_tools: '',
-    pain_points: '',
-    how_did_you_hear: '',
-    monthly_budget: '',
-    urgency: 'medium'
+    name: '',
+    email: '',
+    type: '', // individual or company
+    company_name: '',
+    use_case: '',
+    budget_rupees: ''
   });
 
   const updateFormData = (field: string, value: string) => {
@@ -43,16 +34,7 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user) {
-      toast({
-        title: "Error",
-        description: "You must be logged in to join the waitlist.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!formData.full_name || !formData.primary_use_case || !formData.company_size || !formData.first_task) {
+    if (!formData.name || !formData.email || !formData.type || !formData.use_case) {
       toast({
         title: "Missing Fields",
         description: "Please fill in all required fields.",
@@ -61,37 +43,33 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
       return;
     }
 
+    if (formData.type === 'company' && !formData.company_name) {
+      toast({
+        title: "Missing Company Name",
+        description: "Please provide your company name.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      // Insert waitlist entry
-      const { error: waitlistError } = await supabase
-        .from('waitlist')
-        .insert({
-          user_id: user.id,
-          ...formData
-        });
-
-      if (waitlistError) throw waitlistError;
-
-      // Update profile to mark as on waitlist
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({ is_on_waitlist: true })
-        .eq('user_id', user.id);
-
-      if (profileError) throw profileError;
-
+      // Simulate form submission
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       toast({
-        title: "Welcome to the waitlist! 🎉",
-        description: "You'll receive updates about early access soon.",
+        title: "Form Submitted! 🎉",
+        description: "Thank you for your interest. Redirecting you now...",
       });
 
-      onClose();
-      if (onSuccess) {
-        onSuccess();
-      }
+      setTimeout(() => {
+        onClose();
+        if (onSuccess) {
+          onSuccess();
+        }
+      }, 1500);
     } catch (error) {
-      console.error('Error submitting waitlist form:', error);
+      console.error('Error submitting form:', error);
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",
@@ -104,7 +82,7 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold">
             Join AutoAgent Waitlist
@@ -112,57 +90,58 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="full_name">Full Name *</Label>
-              <Input
-                id="full_name"
-                value={formData.full_name}
-                onChange={(e) => updateFormData('full_name', e.target.value)}
-                required
-                placeholder="Your full name"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="email">Email *</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => updateFormData('email', e.target.value)}
-                required
-                disabled
-                className="bg-gray-100"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="name">Name *</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => updateFormData('name', e.target.value)}
+              required
+              placeholder="Your full name"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="email">Email *</Label>
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => updateFormData('email', e.target.value)}
+              required
+              placeholder="your.email@example.com"
+            />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="company">Company/Individual</Label>
-              <Input
-                id="company"
-                value={formData.company}
-                onChange={(e) => updateFormData('company', e.target.value)}
-                placeholder="Company name or 'Individual'"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="job_title">Job Title</Label>
-              <Input
-                id="job_title"
-                value={formData.job_title}
-                onChange={(e) => updateFormData('job_title', e.target.value)}
-                placeholder="Your role"
-              />
-            </div>
+          <div className="space-y-3">
+            <Label>Type *</Label>
+            <RadioGroup value={formData.type} onValueChange={(value) => updateFormData('type', value)}>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="individual" id="individual" />
+                <Label htmlFor="individual">Individual</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="company" id="company" />
+                <Label htmlFor="company">Company</Label>
+              </div>
+            </RadioGroup>
           </div>
+
+          {formData.type === 'company' && (
+            <div className="space-y-2">
+              <Label htmlFor="company_name">Company Name *</Label>
+              <Input
+                id="company_name"
+                value={formData.company_name}
+                onChange={(e) => updateFormData('company_name', e.target.value)}
+                placeholder="Your company name"
+              />
+            </div>
+          )}
 
           <div className="space-y-2">
-            <Label htmlFor="primary_use_case">Primary Use Case *</Label>
-            <Select value={formData.primary_use_case} onValueChange={(value) => updateFormData('primary_use_case', value)}>
+            <Label htmlFor="use_case">Primary Use Case *</Label>
+            <Select value={formData.use_case} onValueChange={(value) => updateFormData('use_case', value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select your main use case" />
               </SelectTrigger>
@@ -178,85 +157,19 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="company_size">Company Size *</Label>
-            <Select value={formData.company_size} onValueChange={(value) => updateFormData('company_size', value)}>
+            <Label htmlFor="budget_rupees">Monthly Budget (₹)</Label>
+            <Select value={formData.budget_rupees} onValueChange={(value) => updateFormData('budget_rupees', value)}>
               <SelectTrigger>
-                <SelectValue placeholder="Select company size" />
+                <SelectValue placeholder="Select budget range in rupees" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="individual">Individual</SelectItem>
-                <SelectItem value="2-10">2-10 employees</SelectItem>
-                <SelectItem value="11-50">11-50 employees</SelectItem>
-                <SelectItem value="51-200">51-200 employees</SelectItem>
-                <SelectItem value="200+">200+ employees</SelectItem>
+                <SelectItem value="under_2000">Under ₹2,000</SelectItem>
+                <SelectItem value="2000-5000">₹2,000 - ₹5,000</SelectItem>
+                <SelectItem value="5000-10000">₹5,000 - ₹10,000</SelectItem>
+                <SelectItem value="10000-25000">₹10,000 - ₹25,000</SelectItem>
+                <SelectItem value="25000+">₹25,000+</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="first_task">What's the first task you'd want to automate? *</Label>
-            <Textarea
-              id="first_task"
-              value={formData.first_task}
-              onChange={(e) => updateFormData('first_task', e.target.value)}
-              placeholder="Describe the specific workflow or task you'd like to automate first"
-              required
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="current_tools">Current Tools</Label>
-            <Input
-              id="current_tools"
-              value={formData.current_tools}
-              onChange={(e) => updateFormData('current_tools', e.target.value)}
-              placeholder="e.g., Slack, Notion, Gmail, Salesforce"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="pain_points">What are your biggest workflow pain points?</Label>
-            <Textarea
-              id="pain_points"
-              value={formData.pain_points}
-              onChange={(e) => updateFormData('pain_points', e.target.value)}
-              placeholder="Tell us about the challenges you face with current workflows"
-            />
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="how_did_you_hear">How did you hear about us?</Label>
-              <Select value={formData.how_did_you_hear} onValueChange={(value) => updateFormData('how_did_you_hear', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select an option" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="twitter">Twitter</SelectItem>
-                  <SelectItem value="linkedin">LinkedIn</SelectItem>
-                  <SelectItem value="friend">Friend/Colleague</SelectItem>
-                  <SelectItem value="google">Google Search</SelectItem>
-                  <SelectItem value="newsletter">Newsletter</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="monthly_budget">Monthly Budget Range</Label>
-              <Select value={formData.monthly_budget} onValueChange={(value) => updateFormData('monthly_budget', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select budget range" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="under_50">Under $50</SelectItem>
-                  <SelectItem value="50-100">$50 - $100</SelectItem>
-                  <SelectItem value="100-250">$100 - $250</SelectItem>
-                  <SelectItem value="250-500">$250 - $500</SelectItem>
-                  <SelectItem value="500+">$500+</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </div>
 
           <div className="flex justify-end space-x-4 pt-6 border-t">
@@ -281,7 +194,7 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
               ) : (
                 <>
                   <CheckCircle size={16} />
-                  <span>Join Waitlist</span>
+                  <span>Done</span>
                 </>
               )}
             </Button>
