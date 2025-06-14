@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -13,7 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 interface WaitlistFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess?: () => void;
+  onSuccess?: (email: string) => void;
 }
 
 const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, onSuccess }) => {
@@ -71,7 +70,7 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
         .from('waitlist')
         .insert({
           full_name: formData.full_name,
-          email: formData.email,
+          email: formData.email.toLowerCase(),
           type: formData.type,
           company: formData.type === 'company' ? formData.company : null,
           job_role: formData.type === 'individual' ? formData.job_role : null,
@@ -100,7 +99,7 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
       setTimeout(() => {
         onClose();
         if (onSuccess) {
-          onSuccess();
+          onSuccess(formData.email);
         }
       }, 1500);
     } catch (error) {

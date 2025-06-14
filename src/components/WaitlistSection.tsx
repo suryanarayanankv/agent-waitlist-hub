@@ -5,9 +5,10 @@ import { CheckCircle } from 'lucide-react';
 
 interface WaitlistSectionProps {
   onAuthClick: () => void;
+  isOnWaitlist: boolean;
 }
 
-const WaitlistSection: React.FC<WaitlistSectionProps> = ({ onAuthClick }) => {
+const WaitlistSection: React.FC<WaitlistSectionProps> = ({ onAuthClick, isOnWaitlist }) => {
   const handleJoinClick = () => {
     onAuthClick();
   };
@@ -17,10 +18,13 @@ const WaitlistSection: React.FC<WaitlistSectionProps> = ({ onAuthClick }) => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="bg-white/10 backdrop-blur-md rounded-3xl p-12 border border-white/20">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Ready to Automate Everything?
+            {isOnWaitlist ? 'Ready to Try Our MVP?' : 'Ready to Automate Everything?'}
           </h2>
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Join the waitlist for early access to AutoAgent. Limited spots available for our exclusive beta program.
+            {isOnWaitlist 
+              ? 'You\'re already on our waitlist! Try out our MVP and experience the future of automation.'
+              : 'Join the waitlist for early access to AutoAgent. Limited spots available for our exclusive beta program.'
+            }
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
@@ -29,14 +33,14 @@ const WaitlistSection: React.FC<WaitlistSectionProps> = ({ onAuthClick }) => {
               onClick={handleJoinClick}
               className="bg-white text-emerald-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              Join the Waitlist
+              {isOnWaitlist ? 'Try out MVP' : 'Join the Waitlist'}
             </Button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-white/80">
             <div className="flex items-center justify-center space-x-2">
               <CheckCircle size={20} />
-              <span>Free early access</span>
+              <span>{isOnWaitlist ? 'MVP access' : 'Free early access'}</span>
             </div>
             <div className="flex items-center justify-center space-x-2">
               <CheckCircle size={20} />
@@ -44,7 +48,7 @@ const WaitlistSection: React.FC<WaitlistSectionProps> = ({ onAuthClick }) => {
             </div>
             <div className="flex items-center justify-center space-x-2">
               <CheckCircle size={20} />
-              <span>50% discount</span>
+              <span>{isOnWaitlist ? 'Full features' : '50% discount'}</span>
             </div>
           </div>
         </div>

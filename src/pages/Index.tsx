@@ -7,9 +7,13 @@ import HowItWorksSection from '@/components/HowItWorksSection';
 import WaitlistSection from '@/components/WaitlistSection';
 import Footer from '@/components/Footer';
 import WaitlistFormModal from '@/components/WaitlistFormModal';
+import { useUserEmail } from '@/hooks/useUserEmail';
+import { useWaitlistStatus } from '@/hooks/useWaitlistStatus';
 
 const Index = () => {
   const [showWaitlistForm, setShowWaitlistForm] = useState(false);
+  const { userEmail, saveUserEmail } = useUserEmail();
+  const { isOnWaitlist } = useWaitlistStatus(userEmail);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -19,27 +23,33 @@ const Index = () => {
   };
 
   const handleWaitlistClick = () => {
-    setShowWaitlistForm(true);
+    if (isOnWaitlist) {
+      // Redirect to MVP
+      window.location.href = 'https://example.com/mvp'; // Replace with your MVP URL
+    } else {
+      setShowWaitlistForm(true);
+    }
   };
 
-  const handleWaitlistSuccess = () => {
-    // Redirect to the link you'll provide
-    // For now, I'll add a placeholder - you can replace this with your actual redirect URL
+  const handleWaitlistSuccess = (email: string) => {
+    saveUserEmail(email);
+    // Redirect to the success URL
     window.location.href = 'https://example.com/success'; // Replace with your redirect URL
   };
 
   return (
     <div className="min-h-screen bg-white">
-      <Navigation onAuthClick={handleWaitlistClick} />
+      <Navigation onAuthClick={handleWaitlistClick} isOnWaitlist={isOnWaitlist} />
       
       <Hero 
         onJoinWaitlist={handleWaitlistClick}
         onLearnMore={() => scrollToSection('benefits')}
+        isOnWaitlist={isOnWaitlist}
       />
       
       <BenefitsSection />
       <HowItWorksSection />
-      <WaitlistSection onAuthClick={handleWaitlistClick} />
+      <WaitlistSection onAuthClick={handleWaitlistClick} isOnWaitlist={isOnWaitlist} />
       <Footer />
 
       <WaitlistFormModal

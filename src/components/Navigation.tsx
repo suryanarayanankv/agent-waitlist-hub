@@ -6,9 +6,10 @@ import { LogOut, User } from 'lucide-react';
 
 interface NavigationProps {
   onAuthClick: () => void;
+  isOnWaitlist: boolean;
 }
 
-const Navigation: React.FC<NavigationProps> = ({ onAuthClick }) => {
+const Navigation: React.FC<NavigationProps> = ({ onAuthClick, isOnWaitlist }) => {
   const { user, signOut } = useAuth();
 
   return (
@@ -40,8 +41,11 @@ const Navigation: React.FC<NavigationProps> = ({ onAuthClick }) => {
                 </Button>
               </div>
             ) : (
-              <Button onClick={onAuthClick} className="bg-emerald-500 hover:bg-emerald-600">
-                Join Waitlist
+              <Button 
+                onClick={onAuthClick} 
+                className="bg-emerald-500 hover:bg-emerald-600"
+              >
+                {isOnWaitlist ? 'Try out MVP' : 'Join Waitlist'}
               </Button>
             )}
           </div>

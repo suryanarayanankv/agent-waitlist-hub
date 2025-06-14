@@ -1,98 +1,77 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Play, ArrowDown } from 'lucide-react';
+import { ArrowRight, Play } from 'lucide-react';
 
 interface HeroProps {
   onJoinWaitlist: () => void;
   onLearnMore: () => void;
+  isOnWaitlist: boolean;
 }
 
-const Hero: React.FC<HeroProps> = ({ onJoinWaitlist, onLearnMore }) => {
+const Hero: React.FC<HeroProps> = ({ onJoinWaitlist, onLearnMore, isOnWaitlist }) => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-emerald-50">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-      
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-emerald-50 pt-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto">
-          {/* Main Headline */}
           <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
-            Meet the{' '}
-            <span className="bg-gradient-to-r from-emerald-500 to-blue-500 bg-clip-text text-transparent">
-              Autonomous Agent
-            </span>{' '}
-            That Works While You Work
+            Automate Everything with
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-blue-500">
+              {" "}AI Agents
+            </span>
           </h1>
           
-          {/* Subheadline */}
-          <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            No setups, no prompts, just pure execution. 
-            <br />
-            Your AI agent handles workflows so you can focus on what matters.
+          <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+            Transform your business with intelligent automation. Our AI agents handle repetitive tasks, 
+            streamline workflows, and boost productivity while you focus on what matters most.
           </p>
 
-          {/* Video Placeholder */}
-          <div className="relative mx-auto mb-12 max-w-4xl">
-            <div className="relative bg-gray-900 rounded-2xl overflow-hidden shadow-2xl aspect-video">
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20"></div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Button 
-                  size="lg" 
-                  className="bg-white/20 backdrop-blur-md hover:bg-white/30 text-white border border-white/30"
-                >
-                  <Play className="mr-2 h-6 w-6" />
-                  Watch Demo
-                </Button>
-              </div>
-              <div className="absolute bottom-4 left-4 text-white/80 text-sm">
-                See AutoAgent in action
-              </div>
-            </div>
-          </div>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
             <Button 
-              size="lg" 
+              size="lg"
               onClick={onJoinWaitlist}
-              className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+              className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2"
             >
-              Join the Waitlist
+              <span>{isOnWaitlist ? 'Try out MVP' : 'Join the Waitlist'}</span>
+              <ArrowRight size={20} />
             </Button>
+            
             <Button 
-              size="lg" 
               variant="outline"
+              size="lg"
               onClick={onLearnMore}
-              className="border-2 border-gray-300 hover:border-emerald-500 px-8 py-4 text-lg font-semibold"
+              className="border-2 border-gray-300 hover:border-emerald-500 px-8 py-4 text-lg font-semibold transition-all duration-300 flex items-center space-x-2"
             >
-              Learn How It Works
+              <Play size={20} />
+              <span>Learn More</span>
             </Button>
           </div>
 
-          {/* Social Proof */}
-          <div className="flex items-center justify-center space-x-6 text-gray-600">
-            <div className="flex items-center space-x-2">
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div 
-                    key={i}
-                    className="w-8 h-8 bg-gradient-to-r from-emerald-400 to-blue-400 rounded-full border-2 border-white"
-                  ></div>
-                ))}
+          {/* Feature highlights */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div className="p-6">
+              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">🤖</span>
               </div>
-              <span className="text-sm font-medium">Join 500+ others already waiting</span>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Smart Automation</h3>
+              <p className="text-gray-600">AI-powered agents that learn and adapt to your workflows</p>
             </div>
-          </div>
-
-          {/* Scroll Indicator */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-            <button 
-              onClick={onLearnMore}
-              className="animate-bounce text-gray-400 hover:text-emerald-500 transition-colors"
-            >
-              <ArrowDown size={24} />
-            </button>
+            
+            <div className="p-6">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">⚡</span>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Lightning Fast</h3>
+              <p className="text-gray-600">Process thousands of tasks in minutes, not hours</p>
+            </div>
+            
+            <div className="p-6">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">🎯</span>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Precision Accuracy</h3>
+              <p className="text-gray-600">99.9% accuracy with continuous learning capabilities</p>
+            </div>
           </div>
         </div>
       </div>
