@@ -20,6 +20,16 @@ const Index = () => {
     }
   };
 
+  const handleAuthClick = () => {
+    console.log('Auth modal opening...');
+    setShowAuthModal(true);
+  };
+
+  const handleAuthClose = () => {
+    console.log('Auth modal closing...');
+    setShowAuthModal(false);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-emerald-50">
@@ -33,21 +43,21 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navigation onAuthClick={() => setShowAuthModal(true)} />
+      <Navigation onAuthClick={handleAuthClick} />
       
       <Hero 
-        onJoinWaitlist={() => setShowAuthModal(true)}
+        onJoinWaitlist={handleAuthClick}
         onLearnMore={() => scrollToSection('benefits')}
       />
       
       <BenefitsSection />
       <HowItWorksSection />
-      <WaitlistSection onAuthClick={() => setShowAuthModal(true)} />
+      <WaitlistSection onAuthClick={handleAuthClick} />
       <Footer />
 
       <AuthModal 
         isOpen={showAuthModal} 
-        onClose={() => setShowAuthModal(false)} 
+        onClose={handleAuthClose} 
       />
     </div>
   );

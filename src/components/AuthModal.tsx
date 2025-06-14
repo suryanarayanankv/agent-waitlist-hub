@@ -22,8 +22,39 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const { signUp, signIn } = useAuth();
   const { toast } = useToast();
 
+  const resetForm = () => {
+    setEmail('');
+    setPassword('');
+    setFullName('');
+    setLoading(false);
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!email || !password) {
+      toast({
+        title: "Missing Fields",
+        description: "Please fill in all required fields.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (isSignUp && !fullName) {
+      toast({
+        title: "Missing Name",
+        description: "Please enter your full name.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -37,9 +68,20 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       }
 
       if (result.error) {
+        let errorMessage = result.error.message;
+        
+        // Handle common auth errors with user-friendly messages
+        if (errorMessage.includes('Email not confirmed')) {
+          errorMessage = 'Please check your email and click the confirmation link before signing in.';
+        } else if (errorMessage.includes('Invalid login credentials')) {
+          errorMessage = 'Invalid email or password. Please try again.';
+        } else if (errorMessage.includes('User already registered')) {
+          errorMessage = 'An account with this email already exists. Try signing in instead.';
+        }
+
         toast({
           title: "Authentication Error",
-          description: result.error.message,
+          description: errorMessage,
           variant: "destructive"
         });
       } else {
@@ -47,13 +89,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           title: isSignUp ? "Account Created!" : "Welcome Back!",
           description: isSignUp ? "Please check your email to verify your account." : "You're now signed in.",
         });
-        onClose();
-        // Reset form
-        setEmail('');
-        setPassword('');
-        setFullName('');
+        handleClose();
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Auth error:', error);
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",
@@ -65,29 +104,32 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center">
-            {isSignUp ? 'Create Your Account' : 'Welcome Back'}
+          <DialogTitle className="text-center text-xl font-bold">
+            {isSignUp ? 'Join AutoAgent Waitlist' : 'Welcome Back'}
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           {isSignUp && (
             <div className="space-y-2">
-              <Label htmlFor="fullName">Full Name</Label>
+              <Label htmlFor="fullName">Full Name *</Label>
               <Input
                 id="fullName"
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                required
+                required={isSignUp}
                 placeholder="Enter your full name"
+                disabled={loading}
               />
             </div>
           )}
+          
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">Email *</Label>
             <Input
               id="email"
               type="email"
@@ -95,10 +137,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="Enter your email"
+              disabled={loading}
             />
           </div>
+          
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">Password *</Label>
             <Input
               id="password"
               type="password"
@@ -107,11 +151,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               required
               placeholder="Enter your password"
               minLength={6}
+              disabled={loading}
             />
           </div>
+          
           <Button
             type="submit"
-            className="w-full bg-emerald-500 hover:bg-emerald-600"
+            className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold"
             disabled={loading}
           >
             {loading ? (
@@ -120,14 +166,19 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 {isSignUp ? 'Creating Account...' : 'Signing In...'}
               </>
             ) : (
-              isSignUp ? 'Create Account' : 'Sign In'
+              isSignUp ? 'Create Account & Join Waitlist' : 'Sign In'
             )}
           </Button>
-          <div className="text-center">
+          
+          <div className="text-center pt-4 border-t">
             <button
               type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm text-emerald-600 hover:text-emerald-700"
+              onClick={() => {
+                setIsSignUp(!isSignUp);
+                resetForm();
+              }}
+              className="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+              disabled={loading}
             >
               {isSignUp ? 'Already have an account? Sign in' : 'Need an account? Sign up'}
             </button>
