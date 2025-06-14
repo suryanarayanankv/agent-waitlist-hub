@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -5,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { CheckCircle, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -18,6 +20,7 @@ interface WaitlistFormModalProps {
 const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [alreadyJoined, setAlreadyJoined] = useState(false);
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
@@ -32,8 +35,20 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleAlreadyJoinedSubmit = () => {
+    // Redirect to MVP directly
+    window.location.href = 'https://example.com/mvp'; // Replace with your MVP URL
+    onClose();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // If user checked "already joined", redirect to MVP
+    if (alreadyJoined) {
+      handleAlreadyJoinedSubmit();
+      return;
+    }
     
     if (!formData.full_name || !formData.email || !formData.type || !formData.primary_use_case) {
       toast({
@@ -124,99 +139,116 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
-          <div className="space-y-2">
-            <Label htmlFor="full_name">Name *</Label>
-            <Input
-              id="full_name"
-              value={formData.full_name}
-              onChange={(e) => updateFormData('full_name', e.target.value)}
-              required
-              placeholder="Your full name"
+          {/* Already joined checkbox */}
+          <div className="flex items-center space-x-2 p-4 bg-gray-50 rounded-lg">
+            <Checkbox
+              id="already-joined"
+              checked={alreadyJoined}
+              onCheckedChange={(checked) => setAlreadyJoined(checked as boolean)}
             />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="email">Email *</Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => updateFormData('email', e.target.value)}
-              required
-              placeholder="your.email@example.com"
-            />
+            <Label htmlFor="already-joined" className="text-sm">
+              I have already joined the waitlist and want to try the MVP
+            </Label>
           </div>
 
-          <div className="space-y-3">
-            <Label>Type *</Label>
-            <RadioGroup value={formData.type} onValueChange={(value) => updateFormData('type', value)}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="individual" id="individual" />
-                <Label htmlFor="individual">Individual</Label>
+          {/* Show form fields only if not already joined */}
+          {!alreadyJoined && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="full_name">Name *</Label>
+                <Input
+                  id="full_name"
+                  value={formData.full_name}
+                  onChange={(e) => updateFormData('full_name', e.target.value)}
+                  required
+                  placeholder="Your full name"
+                />
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="company" id="company" />
-                <Label htmlFor="company">Company</Label>
+              
+              <div className="space-y-2">
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => updateFormData('email', e.target.value)}
+                  required
+                  placeholder="your.email@example.com"
+                />
               </div>
-            </RadioGroup>
-          </div>
 
-          {formData.type === 'company' && (
-            <div className="space-y-2">
-              <Label htmlFor="company">Company Name *</Label>
-              <Input
-                id="company"
-                value={formData.company}
-                onChange={(e) => updateFormData('company', e.target.value)}
-                placeholder="Your company name"
-              />
-            </div>
+              <div className="space-y-3">
+                <Label>Type *</Label>
+                <RadioGroup value={formData.type} onValueChange={(value) => updateFormData('type', value)}>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="individual" id="individual" />
+                    <Label htmlFor="individual">Individual</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="company" id="company" />
+                    <Label htmlFor="company">Company</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              {formData.type === 'company' && (
+                <div className="space-y-2">
+                  <Label htmlFor="company">Company Name *</Label>
+                  <Input
+                    id="company"
+                    value={formData.company}
+                    onChange={(e) => updateFormData('company', e.target.value)}
+                    placeholder="Your company name"
+                  />
+                </div>
+              )}
+
+              {formData.type === 'individual' && (
+                <div className="space-y-2">
+                  <Label htmlFor="job_role">Job Role *</Label>
+                  <Input
+                    id="job_role"
+                    value={formData.job_role}
+                    onChange={(e) => updateFormData('job_role', e.target.value)}
+                    placeholder="Your job role"
+                  />
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="primary_use_case">Primary Use Case *</Label>
+                <Select value={formData.primary_use_case} onValueChange={(value) => updateFormData('primary_use_case', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your main use case" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="workflow_automation">Workflow Automation</SelectItem>
+                    <SelectItem value="data_processing">Data Processing</SelectItem>
+                    <SelectItem value="customer_support">Customer Support</SelectItem>
+                    <SelectItem value="content_creation">Content Creation</SelectItem>
+                    <SelectItem value="team_collaboration">Team Collaboration</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="budget_rupees">Monthly Budget (₹)</Label>
+                <Select value={formData.budget_rupees} onValueChange={(value) => updateFormData('budget_rupees', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select budget range in rupees" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="under_2000">Under ₹2,000</SelectItem>
+                    <SelectItem value="2000-5000">₹2,000 - ₹5,000</SelectItem>
+                    <SelectItem value="5000-10000">₹5,000 - ₹10,000</SelectItem>
+                    <SelectItem value="10000-25000">₹10,000 - ₹25,000</SelectItem>
+                    <SelectItem value="25000+">₹25,000+</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </>
           )}
-
-          {formData.type === 'individual' && (
-            <div className="space-y-2">
-              <Label htmlFor="job_role">Job Role *</Label>
-              <Input
-                id="job_role"
-                value={formData.job_role}
-                onChange={(e) => updateFormData('job_role', e.target.value)}
-                placeholder="Your job role"
-              />
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <Label htmlFor="primary_use_case">Primary Use Case *</Label>
-            <Select value={formData.primary_use_case} onValueChange={(value) => updateFormData('primary_use_case', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select your main use case" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="workflow_automation">Workflow Automation</SelectItem>
-                <SelectItem value="data_processing">Data Processing</SelectItem>
-                <SelectItem value="customer_support">Customer Support</SelectItem>
-                <SelectItem value="content_creation">Content Creation</SelectItem>
-                <SelectItem value="team_collaboration">Team Collaboration</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="budget_rupees">Monthly Budget (₹)</Label>
-            <Select value={formData.budget_rupees} onValueChange={(value) => updateFormData('budget_rupees', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select budget range in rupees" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="under_2000">Under ₹2,000</SelectItem>
-                <SelectItem value="2000-5000">₹2,000 - ₹5,000</SelectItem>
-                <SelectItem value="5000-10000">₹5,000 - ₹10,000</SelectItem>
-                <SelectItem value="10000-25000">₹10,000 - ₹25,000</SelectItem>
-                <SelectItem value="25000+">₹25,000+</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
 
           <div className="flex justify-end space-x-4 pt-6 border-t">
             <Button
@@ -240,7 +272,7 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
               ) : (
                 <>
                   <CheckCircle size={16} />
-                  <span>Done</span>
+                  <span>{alreadyJoined ? 'Go to MVP' : 'Done'}</span>
                 </>
               )}
             </Button>
