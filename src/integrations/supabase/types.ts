@@ -47,64 +47,58 @@ export type Database = {
       }
       waitlist: {
         Row: {
+          budget_rupees: string | null
           company: string | null
-          company_size: string
           created_at: string | null
-          current_tools: string | null
           email: string
-          first_task: string
           full_name: string
-          how_did_you_hear: string | null
           id: string
+          job_role: string | null
           job_title: string | null
           monthly_budget: string | null
           notes: string | null
-          pain_points: string | null
           primary_use_case: string
           status: string | null
+          type: string
           updated_at: string | null
-          urgency: string | null
-          user_id: string
+          use_case: string
+          user_id: string | null
         }
         Insert: {
+          budget_rupees?: string | null
           company?: string | null
-          company_size: string
           created_at?: string | null
-          current_tools?: string | null
           email: string
-          first_task: string
           full_name: string
-          how_did_you_hear?: string | null
           id?: string
+          job_role?: string | null
           job_title?: string | null
           monthly_budget?: string | null
           notes?: string | null
-          pain_points?: string | null
           primary_use_case: string
           status?: string | null
+          type?: string
           updated_at?: string | null
-          urgency?: string | null
-          user_id: string
+          use_case?: string
+          user_id?: string | null
         }
         Update: {
+          budget_rupees?: string | null
           company?: string | null
-          company_size?: string
           created_at?: string | null
-          current_tools?: string | null
           email?: string
-          first_task?: string
           full_name?: string
-          how_did_you_hear?: string | null
           id?: string
+          job_role?: string | null
           job_title?: string | null
           monthly_budget?: string | null
           notes?: string | null
-          pain_points?: string | null
           primary_use_case?: string
           status?: string | null
+          type?: string
           updated_at?: string | null
-          urgency?: string | null
-          user_id?: string
+          use_case?: string
+          user_id?: string | null
         }
         Relationships: []
       }

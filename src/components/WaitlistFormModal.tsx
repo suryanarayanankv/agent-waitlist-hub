@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { CheckCircle, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface WaitlistFormModalProps {
   isOpen: boolean;
@@ -19,11 +20,12 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
+    full_name: '',
     email: '',
-    type: '', // individual or company
-    company_name: '',
-    use_case: '',
+    type: '',
+    company: '',
+    job_role: '',
+    primary_use_case: '',
     budget_rupees: ''
   });
 
@@ -34,7 +36,7 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.email || !formData.type || !formData.use_case) {
+    if (!formData.full_name || !formData.email || !formData.type || !formData.primary_use_case) {
       toast({
         title: "Missing Fields",
         description: "Please fill in all required fields.",
@@ -43,7 +45,7 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
       return;
     }
 
-    if (formData.type === 'company' && !formData.company_name) {
+    if (formData.type === 'company' && !formData.company) {
       toast({
         title: "Missing Company Name",
         description: "Please provide your company name.",
@@ -52,10 +54,43 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
       return;
     }
 
+    if (formData.type === 'individual' && !formData.job_role) {
+      toast({
+        title: "Missing Job Role",
+        description: "Please provide your job role.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('Submitting form data:', formData);
+      
+      const { data, error } = await supabase
+        .from('waitlist')
+        .insert({
+          full_name: formData.full_name,
+          email: formData.email,
+          type: formData.type,
+          company: formData.type === 'company' ? formData.company : null,
+          job_role: formData.type === 'individual' ? formData.job_role : null,
+          primary_use_case: formData.primary_use_case,
+          use_case: formData.primary_use_case,
+          budget_rupees: formData.budget_rupees
+        });
+
+      if (error) {
+        console.error('Error submitting to database:', error);
+        toast({
+          title: "Error",
+          description: "Failed to submit form. Please try again.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      console.log('Form submitted successfully:', data);
       
       toast({
         title: "Form Submitted! 🎉",
@@ -91,11 +126,11 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
         
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Name *</Label>
+            <Label htmlFor="full_name">Name *</Label>
             <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => updateFormData('name', e.target.value)}
+              id="full_name"
+              value={formData.full_name}
+              onChange={(e) => updateFormData('full_name', e.target.value)}
               required
               placeholder="Your full name"
             />
@@ -129,19 +164,31 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
 
           {formData.type === 'company' && (
             <div className="space-y-2">
-              <Label htmlFor="company_name">Company Name *</Label>
+              <Label htmlFor="company">Company Name *</Label>
               <Input
-                id="company_name"
-                value={formData.company_name}
-                onChange={(e) => updateFormData('company_name', e.target.value)}
+                id="company"
+                value={formData.company}
+                onChange={(e) => updateFormData('company', e.target.value)}
                 placeholder="Your company name"
               />
             </div>
           )}
 
+          {formData.type === 'individual' && (
+            <div className="space-y-2">
+              <Label htmlFor="job_role">Job Role *</Label>
+              <Input
+                id="job_role"
+                value={formData.job_role}
+                onChange={(e) => updateFormData('job_role', e.target.value)}
+                placeholder="Your job role"
+              />
+            </div>
+          )}
+
           <div className="space-y-2">
-            <Label htmlFor="use_case">Primary Use Case *</Label>
-            <Select value={formData.use_case} onValueChange={(value) => updateFormData('use_case', value)}>
+            <Label htmlFor="primary_use_case">Primary Use Case *</Label>
+            <Select value={formData.primary_use_case} onValueChange={(value) => updateFormData('primary_use_case', value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select your main use case" />
               </SelectTrigger>
