@@ -122,7 +122,7 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
       <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold">
-            Join AutoAgent Waitlist
+            Join Axiom Waitlist
           </DialogTitle>
         </DialogHeader>
         

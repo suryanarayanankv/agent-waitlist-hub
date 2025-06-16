@@ -19,7 +19,7 @@ const Navigation: React.FC<NavigationProps> = ({ onAuthClick, isOnWaitlist }) =>
           {/* Logo */}
           <div className="flex items-center">
             <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-lg"></div>
-            <span className="ml-2 text-xl font-bold text-gray-900">AutoAgent</span>
+            <span className="ml-2 text-xl font-bold text-gray-900">Axiom</span>
           </div>
 
           {/* Auth Buttons */}
