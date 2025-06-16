@@ -44,8 +44,9 @@ const Navigation: React.FC<NavigationProps> = ({ onAuthClick, isOnWaitlist }) =>
               <Button 
                 onClick={onAuthClick} 
                 className="bg-emerald-500 hover:bg-emerald-600"
+                disabled={isOnWaitlist}
               >
-                {isOnWaitlist ? 'Try out MVP' : 'Join Waitlist'}
+                {isOnWaitlist ? 'Early Access Reserved' : 'Join Waitlist'}
               </Button>
             )}
           </div>

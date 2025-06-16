@@ -32,7 +32,7 @@ const Hero: React.FC<HeroProps> = ({ onJoinWaitlist, onLearnMore, isOnWaitlist }
               onClick={onJoinWaitlist}
               className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2"
             >
-              <span>{isOnWaitlist ? 'Try out MVP' : 'Join the Waitlist'}</span>
+              <span>{isOnWaitlist ? 'Early Access Reserved' : 'Join the Waitlist'}</span>
               <ArrowRight size={20} />
             </Button>
             
