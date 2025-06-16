@@ -106,16 +106,14 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
       console.log('Form submitted successfully:', data);
       
       toast({
-        title: "Form Submitted! 🎉",
-        description: "Thank you for your interest. Redirecting you now...",
+        title: "Welcome to the Waitlist! 🎉",
+        description: "You're now on our waitlist! We'll notify you via email when early access becomes available.",
       });
 
-      setTimeout(() => {
-        onClose();
-        if (onSuccess) {
-          onSuccess(formData.email);
-        }
-      }, 1500);
+      if (onSuccess) {
+        onSuccess(formData.email);
+      }
+      onClose();
     } catch (error) {
       console.error('Error submitting form:', error);
       toast({
