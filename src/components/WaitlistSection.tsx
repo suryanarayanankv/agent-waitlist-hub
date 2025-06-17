@@ -23,7 +23,7 @@ const WaitlistSection: React.FC<WaitlistSectionProps> = ({ onAuthClick, isOnWait
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
             {isOnWaitlist 
               ? 'You\'re on our waitlist! We\'ll notify you via email when early access becomes available.'
-              : 'Join the waitlist for early access to AutoAgent. Limited spots available for our exclusive beta program.'
+              : 'Join the waitlist for early access to Axiom. Limited spots available for our exclusive beta program.'
             }
           </p>
           

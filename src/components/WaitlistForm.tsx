@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -144,7 +143,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ onClose }) => {
     <div className="space-y-6">
       <div className="text-center mb-8">
         <h3 className="text-2xl font-bold text-gray-900 mb-2">Your automation needs</h3>
-        <p className="text-gray-600">Help us understand how you'll use AutoAgent</p>
+        <p className="text-gray-600">Help us understand how you'll use Axiom</p>
       </div>
       
       <div className="space-y-4">
