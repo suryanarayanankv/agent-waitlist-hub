@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -179,11 +178,16 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
           {formData.type === 'individual' && (
             <div className="space-y-2">
               <Label htmlFor="job_role">Job Role *</Label>
+              <div className="bg-amber-50 border border-amber-200 rounded-md p-3 mb-2">
+                <p className="text-sm text-amber-800 font-medium">
+                  💡 If you're currently a student, specify the role you're pursuing.
+                </p>
+              </div>
               <Input
                 id="job_role"
                 value={formData.job_role}
                 onChange={(e) => updateFormData('job_role', e.target.value)}
-                placeholder="Your job role"
+                placeholder="Your job role or role you're pursuing as a student"
               />
             </div>
           )}
