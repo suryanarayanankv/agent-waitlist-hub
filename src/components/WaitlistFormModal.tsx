@@ -180,7 +180,7 @@ const WaitlistFormModal: React.FC<WaitlistFormModalProps> = ({ isOpen, onClose, 
               <Label htmlFor="job_role">Job Role *</Label>
               <div className="bg-amber-50 border border-amber-200 rounded-md p-3 mb-2">
                 <p className="text-sm text-amber-800 font-medium">
-                  💡 If you're currently a student, specify the role you're pursuing.
+                  💡 If you're currently a student, specify the role you're pursuing (e.g., developer, content creator).
                 </p>
               </div>
               <Input
